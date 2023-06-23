@@ -1,6 +1,7 @@
 package com.example.colorapp;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,10 @@ public class DataListAdapter extends RecyclerView.Adapter<DataListAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DataModel item = data.get(position);
-        holder.colorTextView.setText(item.getColorHashCode());
         holder.dateTextView.setText(item.getDate());
 
         String color = item.getColorHashCode();
@@ -39,14 +40,21 @@ public class DataListAdapter extends RecyclerView.Adapter<DataListAdapter.ViewHo
             try {
                 int colorValue = Color.parseColor(color);
                 holder.cardView.setCardBackgroundColor(colorValue);
+
+                // Underline the colorTextView
+                holder.colorTextView.setText(item.getColorHashCode());
+                holder.colorTextView.setPaintFlags(holder.colorTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             } catch (IllegalArgumentException e) {
                 // Handle invalid color string
                 holder.cardView.setCardBackgroundColor(Color.WHITE);
+                holder.colorTextView.setText("");
             }
         } else {
             holder.cardView.setCardBackgroundColor(Color.WHITE);
+            holder.colorTextView.setText("");
         }
     }
+
 
     @Override
     public int getItemCount() {
