@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private DataListAdapter adapter;
     private TextView tvPendingCount;
     private DatabaseReference databaseRef;
+    private int syncedCount = 0; // Count of data synced with Firebase
+    private int pendingCount = 0; // Count of pending data
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         FloatingActionButton fab = findViewById(R.id.fab);
-
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         adapter = new DataListAdapter();
@@ -58,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
 
-                updatePendingCount(data.size());
+                int totalDataCount = data.size();
+                pendingCount = totalDataCount - syncedCount;
+
+                updatePendingCount();
             }
         });
 
@@ -133,21 +137,25 @@ public class MainActivity extends AppCompatActivity {
                 databaseRef.child(key).setValue(data);
             }
             Toast.makeText(this, "Data uploaded to Firebase", Toast.LENGTH_SHORT).show();
+
+            syncedCount = dataList.size(); // Update the synced count
+            pendingCount = 0; // Reset the pending count
+
+            updatePendingCount();
         } else {
             Toast.makeText(this, "No data to upload", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void updatePendingCount(int count) {
+    private void updatePendingCount() {
         TextView pendingCountTextView = findViewById(R.id.pendingCountTextView);
         if (pendingCountTextView != null) {
-            if (count > 0) {
+            if (pendingCount > 0) {
                 pendingCountTextView.setVisibility(View.VISIBLE);
-                pendingCountTextView.setText(String.valueOf(count));
+                pendingCountTextView.setText(String.valueOf(pendingCount));
             } else {
                 pendingCountTextView.setVisibility(View.GONE);
             }
         }
     }
-
 }
