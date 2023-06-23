@@ -9,11 +9,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/custom"
+        android:background="@drawable/img_2"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Color App" />
+        app:title="Color App"
+        app:titleTextColor="@color/white"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="50dp"
@@ -23,13 +25,19 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/fab" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:textAllCaps="false"
+        android:layout_width="123dp"
+        android:layout_height="35dp"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/baseline_add_24" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Add Color"
+        android:background="@drawable/img_1"
+        />
 
 </RelativeLayout>
