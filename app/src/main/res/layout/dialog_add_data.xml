@@ -9,8 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Color Hash Code" />
+    <TextView
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tvDate"
+        />
 
-    <EditText
+    <Button
         android:id="@+id/etDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

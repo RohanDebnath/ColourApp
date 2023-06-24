@@ -1,5 +1,6 @@
 package com.example.colorapp;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -27,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -99,13 +102,37 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(dialogView);
 
         EditText etColor = dialogView.findViewById(R.id.etColor);
-        EditText etDate = dialogView.findViewById(R.id.etDate);
+        TextView tvDate = dialogView.findViewById(R.id.tvDate); // TextView to display the selected date
+        Button btnDatePicker = dialogView.findViewById(R.id.etDate); // Button to open the date picker dialog
+
+        // Set up calendar dialog
+        final Calendar calendar = Calendar.getInstance();
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        btnDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show DatePickerDialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // Set the selected date in the TextView
+                                String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                                tvDate.setText(selectedDate);
+                            }
+                        }, year, month, day);
+                datePickerDialog.show();
+            }
+        });
 
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String color = etColor.getText().toString();
-                String date = etDate.getText().toString();
+                String date = tvDate.getText().toString();
 
                 if (!TextUtils.isEmpty(color) && !TextUtils.isEmpty(date)) {
                     viewModel.insertData(color, date);
@@ -127,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
     private void syncDataWithFirebase() {
         List<DataModel> dataList = viewModel.getDataList().getValue();
