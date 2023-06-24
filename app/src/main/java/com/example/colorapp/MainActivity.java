@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
         btnDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Show DatePickerDialog
                 DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override

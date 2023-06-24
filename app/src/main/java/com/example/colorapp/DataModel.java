@@ -21,7 +21,7 @@ public class DataModel {
     public DataModel(String colorHashCode, String date) {
         this.colorHashCode = colorHashCode;
         this.date = date;
-        this.isSynced = false; // Set the initial value of isSynced to false
+        this.isSynced = false;
     }
 
     public int getId() {
