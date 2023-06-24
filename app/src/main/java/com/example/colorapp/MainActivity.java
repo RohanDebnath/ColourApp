@@ -34,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private DataListAdapter adapter;
     private TextView tvPendingCount;
     private DatabaseReference databaseRef;
-    private int syncedCount = 0; // Count of data synced with Firebase
-    private int pendingCount = 0; // Count of pending data
-    private int newDataCount = 0; // Count of newly added data
+    private int count = 0; // Count of newly added data
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
 
-                int totalDataCount = data.size();
-                pendingCount = totalDataCount - syncedCount - newDataCount;
-
-                updatePendingCount();
+                updatePendingCount(count);
             }
         });
 
@@ -114,9 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(color) && !TextUtils.isEmpty(date)) {
                     viewModel.insertData(color, date);
-                    newDataCount++; // Increment newDataCount when new data is added
-                    pendingCount++; // Increment pending count when new data is added
-                    updatePendingCount();
+                    count++;
+                    updatePendingCount(count);
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter both color and date.", Toast.LENGTH_SHORT).show();
                 }
@@ -137,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     private void syncDataWithFirebase() {
         List<DataModel> dataList = viewModel.getDataList().getValue();
         if (dataList != null && !dataList.isEmpty()) {
-            int newEntriesCount = dataList.size() - syncedCount;
 
             for (DataModel data : dataList) {
                 if (!data.isSynced()) {
@@ -148,29 +141,23 @@ public class MainActivity extends AppCompatActivity {
                     // Mark data as synced
                     data.setSynced(true);
                     viewModel.updateData(data); // Update the data in the local database
-                    syncedCount++; // Increment synced count when data is synced
                 }
             }
             Toast.makeText(this, "Data uploaded to Firebase", Toast.LENGTH_SHORT).show();
 
             // Reset the counts
-            newDataCount = 0; // Reset new entries count
-            updatePendingCount();
+            count=0;
+            updatePendingCount(count);
         } else {
             Toast.makeText(this, "No data to upload", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
-    private void updatePendingCount() {
+    private void updatePendingCount(int count) {
         tvPendingCount = findViewById(R.id.pendingCountTextView);
         if (tvPendingCount != null) {
-            int totalCount = viewModel.getDataList().getValue().size();
-            int pendingCount = totalCount - syncedCount;
-            if (pendingCount > 0) {
+            if (count > 0) {
                 tvPendingCount.setVisibility(View.VISIBLE);
-                tvPendingCount.setText(String.valueOf(pendingCount));
+                tvPendingCount.setText(String.valueOf(count));
             } else {
                 tvPendingCount.setVisibility(View.GONE);
             }
