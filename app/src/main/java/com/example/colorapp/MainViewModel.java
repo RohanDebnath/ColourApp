@@ -1,47 +1,8 @@
 package com.example.colorapp;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
-import java.util.List;
-
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
-import java.util.List;
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
-import java.util.List;
-
-import android.app.Application;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.room.Room;
-
-import java.util.List;
-
-import android.app.Application;
-
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.room.Room;
@@ -67,4 +28,34 @@ public class MainViewModel extends AndroidViewModel {
         DataModel data = new DataModel(colorHashCode, date);
         new Thread(() -> dataDao.insertData(data)).start();
     }
+
+    public int getSyncedDataCount() {
+        int count = 0;
+        List<DataModel> dataList = getDataList().getValue();
+        if (dataList != null) {
+            for (DataModel data : dataList) {
+                if (data.isSynced()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int getPendingDataCount() {
+        int count = 0;
+        List<DataModel> dataList = getDataList().getValue();
+        if (dataList != null) {
+            for (DataModel data : dataList) {
+                if (!data.isSynced()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public void updateData(DataModel data) {
+        new Thread(() -> dataDao.updateData(data)).start();
+    }
+
 }

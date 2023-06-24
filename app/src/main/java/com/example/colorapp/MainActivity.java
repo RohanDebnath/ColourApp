@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference databaseRef;
     private int syncedCount = 0; // Count of data synced with Firebase
     private int pendingCount = 0; // Count of pending data
+    private int newDataCount = 0; // Count of newly added data
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
 
                 int totalDataCount = data.size();
-                pendingCount = totalDataCount - syncedCount;
+                pendingCount = totalDataCount - syncedCount - newDataCount;
 
                 updatePendingCount();
             }
@@ -113,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(color) && !TextUtils.isEmpty(date)) {
                     viewModel.insertData(color, date);
+                    newDataCount++; // Increment newDataCount when new data is added
+                    pendingCount++; // Increment pending count when new data is added
+                    updatePendingCount();
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter both color and date.", Toast.LENGTH_SHORT).show();
                 }
@@ -133,31 +137,44 @@ public class MainActivity extends AppCompatActivity {
     private void syncDataWithFirebase() {
         List<DataModel> dataList = viewModel.getDataList().getValue();
         if (dataList != null && !dataList.isEmpty()) {
+            int newEntriesCount = dataList.size() - syncedCount;
+
             for (DataModel data : dataList) {
-                // Upload data to Firebase
-                String key = databaseRef.push().getKey();
-                databaseRef.child(key).setValue(data);
+                if (!data.isSynced()) {
+                    // Upload data to Firebase
+                    String key = databaseRef.push().getKey();
+                    databaseRef.child(key).setValue(data);
+
+                    // Mark data as synced
+                    data.setSynced(true);
+                    viewModel.updateData(data); // Update the data in the local database
+                    syncedCount++; // Increment synced count when data is synced
+                }
             }
             Toast.makeText(this, "Data uploaded to Firebase", Toast.LENGTH_SHORT).show();
 
-            syncedCount = dataList.size(); // Update the synced count
-            pendingCount = 0; // Reset the pending count
-
+            // Reset the counts
+            newDataCount = 0; // Reset new entries count
             updatePendingCount();
         } else {
             Toast.makeText(this, "No data to upload", Toast.LENGTH_SHORT).show();
         }
     }
 
+
+
     private void updatePendingCount() {
-        TextView pendingCountTextView = findViewById(R.id.pendingCountTextView);
-        if (pendingCountTextView != null) {
+        tvPendingCount = findViewById(R.id.pendingCountTextView);
+        if (tvPendingCount != null) {
+            int totalCount = viewModel.getDataList().getValue().size();
+            int pendingCount = totalCount - syncedCount;
             if (pendingCount > 0) {
-                pendingCountTextView.setVisibility(View.VISIBLE);
-                pendingCountTextView.setText(String.valueOf(pendingCount));
+                tvPendingCount.setVisibility(View.VISIBLE);
+                tvPendingCount.setText(String.valueOf(pendingCount));
             } else {
-                pendingCountTextView.setVisibility(View.GONE);
+                tvPendingCount.setVisibility(View.GONE);
             }
         }
     }
+
 }

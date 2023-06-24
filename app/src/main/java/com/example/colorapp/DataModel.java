@@ -1,8 +1,6 @@
 package com.example.colorapp;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -10,8 +8,21 @@ import androidx.room.PrimaryKey;
 public class DataModel {
     @PrimaryKey(autoGenerate = true)
     private int id;
+
+    @ColumnInfo(name = "color_hash_code")
     private String colorHashCode;
+
+    @ColumnInfo(name = "date")
     private String date;
+
+    @ColumnInfo(name = "is_synced")
+    private boolean isSynced;
+
+    public DataModel(String colorHashCode, String date) {
+        this.colorHashCode = colorHashCode;
+        this.date = date;
+        this.isSynced = false; // Set the initial value of isSynced to false
+    }
 
     public int getId() {
         return id;
@@ -37,8 +48,11 @@ public class DataModel {
         this.date = date;
     }
 
-    public DataModel(String colorHashCode, String date) {
-        this.colorHashCode = colorHashCode;
-        this.date = date;
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        isSynced = synced;
     }
 }

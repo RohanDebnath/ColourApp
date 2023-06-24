@@ -1,17 +1,11 @@
 package com.example.colorapp;
 
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -25,4 +19,7 @@ public interface DataDao {
 
     @Delete
     void deleteData(DataModel data);
+
+    @Update
+    void updateData(DataModel data);
 }
