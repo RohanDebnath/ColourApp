@@ -2,7 +2,9 @@ package com.example.colorapp;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,12 +40,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvPendingCount;
     private DatabaseReference databaseRef;
     private int count = 0; // Count of newly added data
+    private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        count = sharedPreferences.getInt("count", 0);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -190,6 +195,13 @@ public class MainActivity extends AppCompatActivity {
                 tvPendingCount.setVisibility(View.GONE);
             }
         }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("count", count);
+        editor.apply();
     }
 
 }
